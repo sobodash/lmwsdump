@@ -1,6 +1,17 @@
 #!/usr/bin/php
 <?php
 
+/*
+lmwsdump
+Script extractor for Langrisser Millennium WS: The Last Century.
+Version:   1.0
+Author:    Derrick Sobodash <derrick@sobodash.com>
+Copyright: (c) 2019 Derrick Sobodash
+Web site:  https://github.com/sobodash/lmwsdump/
+License:   BSD License <http://opensource.org/licenses/bsd-license.php>
+*/
+
+
 $rom = "resources/lmws.ws";
 $tbl = "resources/lmws.tbl.txt";
 
@@ -22,9 +33,9 @@ $sc_end   = array(0xa038a, 0xa1e43, 0xa2779, 0xa39b0, 0xa45fe, 0xa56c0,
 $table = array();
 $fd = explode("\n", trim(file_get_contents($tbl)));
 for($i = 0; $i < count($fd); $i++) {
-  $temp1 = explode("=", $fd[$i]);
-  $temp2 = hexdec(substr($temp1[0], 0, 2)) + (hexdec(substr($temp1[0], 2, 2)) << 8);
-  $table[$temp2] = $temp1[1];
+  $x = explode("=", $fd[$i]);
+  $y = hexdec($x[0]);
+  $table[($y >> 8) + (($y & 0xff) << 8)] = $x[1];
 }
 
 // Add control codes
@@ -36,7 +47,7 @@ $table[0xfffd] = "<var>";
 $table[0xffff] = "<end>\n\n";
 
 // Cleanup
-unset($i, $fd, $temp1, $temp2);
+unset($i, $fd, $x, $y);
 
 // Dump script
 $fd = fopen($rom, "rb");
